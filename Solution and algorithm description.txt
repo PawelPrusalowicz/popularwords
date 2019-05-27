@@ -1,0 +1,75 @@
+
+Proposed solution to the given task:
+
+1. Data set
+As the project task didn't specify the source of data for the analysis, I decided to go through various english language corpuses and data accessible in the Internet for free.
+
+-   British Academic Written English Corpus
+    source: http://ota.ahds.ac.uk/headers/2539.xml
+    Multiple text files were merged to one - British_Academic_Written English_Corpus.txt
+
+-   Wikipedia Corpus - Leipzig Corpora Collection
+    source: http://wortschatz.uni-leipzig.de/en/download/
+    file: eng_wikipedia_2016_1M-sentences.txt
+
+-   News Corpus - Leipzig Corpora Collection
+    source: http://wortschatz.uni-leipzig.de/en/download/
+    file: eng_news_2016_1M-sentences.txt
+
+The files are accessible in the src/main/resources folder.
+
+
+2. Approach
+
+To find one thousand most popular words in the "3esl.txt" file, a list of the words - dictionary had to be created.
+
+Then, the data needed to be loaded and prepared. It was cleared of any unnecessary signs, that didn't appear in the "3esl.txt". 
+I didn't decide to lowercase all the entries, because uppercase slogans were present in the dictionary file.
+
+Then the algorithm goes through the data file and examines it word by word, searching for dictionary slogans.
+
+When all the occurrences of the dictionary slogans are counted, the size of the map that stores them is reduced to store slogans with top 1000 most popular words only.
+
+
+3. Algorithm
+
+The program loads a slogan from the data file and checks its presence (binary search) in the dictionary.
+
+However, some slogans in dictionary consist of multiple words. As the number of them is much lower than number of slogans that consist of one word only, it would be inefficient to examine the surrounding words of the given one in every case.
+
+Consequently, all the words were subdivided in two categories:
+words, that may be the first word of a slogan consisting of multiple words and words that can become single word slogans only.
+
+Only if the current word belongs to the first group, the consecutive words in data file are taken into consideration in the search process. In this case new possible dictionary slogans are created (by adding next word in file to previous one) and binary searched in dictionary.
+
+The words that begin such long slogans are stored in a map. The given word is a key and the value is maximal possible number of words in a slogan, that the word can begin.
+Example: for a word "track", the value number becomes 3, because longest slogan in the dictionary that starts with the word "track" is "track and field". Every time the word "track" appears in data, the following 2 words are added to it in search of longer slogans.
+
+This approach leads to speeding up the search process (it's around 2 times faster than checking 3 consecutive words for every word in file for the presented data sets).
+The configuration time gets slightly higher, because of the preparation of the map of words, that begin longer slogans.
+
+EXAMPLES:
+1) word "social"
+the word may begin some dictionary phrases like "social studies"
+
+so whenever a word "social" occurs in text, the following words in text in combination with "social" are checked in dictionary to find phrases.
+if longer phrases are not found, word "social" is added to map
+
+2) word "son"
+
+no dictionary phrase starts with "son", so the word will be binary searched in the dictionary directly
+
+
+4. Test Results
+
+The results are similar to the ones presented by Adam Kilgarriff. Roughly 70 - 80% of the 1000 most popular english words overlap, depending on the data source (chosen data file).
+
+The usage percentages of most popular words are very similar. They vary up to 2.8% for the eng_news_2016_1M-sentences.txt file. And for 99% of words the usage percentage difference is lower than 0.5%.
+
+The reason of the result differences is mainly the difference in data sources.
+Another one could be the way of clearing and preparing the data.
+And finally, Adam Kilgarriff didn't consider slogans consisting of multiple words.
+
+
+Author:
+Paweł Prusałowicz
